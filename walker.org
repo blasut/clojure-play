@@ -1,0 +1,80 @@
+* LMS in cljoure?
+
+** Background
+   
+   So the the last keynote of EuroClojure 2017 was about LMS, or lightweight modular staging, and it was a interesting talk. Basically they built a library to do dynamic code generation in Scala. It was interesting and I think there are some tools in clojure to implement similar things. 
+   They use the type-system in Scala do differentiate between different two kind of computations. ~Rep[T]~ represents a delayed computation of type ~T~ which becomes part of the generated code, while ~T~ becomes a constant in the generated code.
+   
+   The first example they show on their webpage [https://scala-lms.github.io//tutorials/start.html] is
+   #+BEGIN_SRC scala
+ test("1") {
+    val snippet = new DslDriver[Int,Int] {
+      def snippet(x: Rep[Int]) = {
+
+        def compute(b: Boolean): Rep[Int] = {
+          // the if is executed in the first stage
+          if (b) 1 else x
+        }
+        compute(true)+compute(1==1)
+
+      }
+    }
+    assert(snippet.eval(0) === 2)
+    check("1", snippet.code)
+  }
+   #+END_SRC
+   which emits
+   #+BEGIN_SRC scala
+/*****************************************
+Emitting Generated Code
+*******************************************/
+class Snippet extends ((Int)=>(Int)) {
+  def apply(x1:Int): Int = {
+    2
+  }
+}
+/*****************************************
+End of Generated Code
+*******************************************/
+   #+END_SRC
+   As I understand Scala, ~apply~ is used to get a nicer syntax for calling this.
+   
+** What has this to do with lisp?
+
+   TODO make this work lol
+
+   One example would be to do something like this in clojure:
+   #+BEGIN_SRC clojure
+     (def-lsm snippet [x]
+       (let [compute (fn (b) (if b
+                              1
+                              x))]
+         (+ (compute true) (compute (= 1 1)))))
+
+   #+END_SRC
+   
+   One way to this in a lisp is to use the macro-facility. 
+   
+   If we use a simple example for the macro
+   #+BEGIN_SRC clojure
+(def-lsm (snippet [i] (+ 5 5)))
+   #+END_SRC
+   
+   A hacky way to make this work is by just evaling and replacing the body when calling the macro...
+   #+BEGIN_SRC clojure
+  (defmacro def-lsm [name args body]
+    (println name)
+    (println args)
+    (println body)
+    (let [new-body# (eval body)]
+      `(defn ~(symbol name) ~args ~new-body#)))
+   #+END_SRC
+   
+   This of course is extremely hacky and wont work for most things...
+
+   This is like the TDD approach of dummest thing working...
+   
+   
+
+
+   
