@@ -29,11 +29,12 @@
        (catch NumberFormatException nfe 0)))
 
 (defn y-or-n-p [prompt]
-  (= "y"
-     (loop []
-       (or
-        (re-matches #"[yn]" (.toLowerCase (prompt-read prompt)))
-        (recur)))))
+  (let [yes-char "y"]
+    (= yes-char
+       (loop []
+         (or
+          (re-matches #"[yn]" (.toLowerCase (prompt-read prompt)))
+          (recur))))))
 
 (defn prompt-for-cd []
   (struct
@@ -43,9 +44,17 @@
    (parse-integer (prompt-read "Rating"))
    (y-or-n-p "Ripped [y/n]")))
 
+(defn- render-recommendation [rec]
+  (list [:h3 (:title rec)]
+        [:p (:by rec)]
+        [:p (:blurb rec) " "
+         (render-link (:link rec))]
+        [:p rec]))
+
 (defn where [criteria]
   (fn [m]
     (every? (fn [[k v]] (= (k m) v)) criteria)))
+
 
 (filter (where {:artist "Dixie Chicks" :rating 8}) (init-db))
 
