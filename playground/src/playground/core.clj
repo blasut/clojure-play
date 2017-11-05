@@ -103,6 +103,97 @@ original
 (zip/root (zip/insert-child (zip/up b) '(1 2 3)))
 
 
+(apply str (repeat 10 "s"))
+
+(frequencies [1 2 3 4 5 6])
+;; is this automatically sorted? :O
+(frequencies [[1 1] [2 2] [3 3] [1 2] [1 1] [2 2]])
+
+;; game of life stolen from http://clj-me.cgrand.net/2011/08/19/conways-game-of-life/
+(defn neighbours [[x y]]
+  (for [dx [-1 0 1]
+        dy (if (zero? dx) [-1 -1] [-1 0 -1])]
+    [(+ dx x) (+ dy y)]))
+
+(defn neighbours
+  "Determines all the neighbours of a given coordinate"
+  [[x y]]
+  (for [dx [-1 0 1] dy [-1 0 1] :when (not= 0 dx dy)]
+    [(+ dx x) (+ dy y)]))
+
+(neighbours [5 5])
+
+(defn step [cells]
+  (set (for [[loc n] (frequencies (mapcat neighbours cells))
+             :when (or (= n 3) (and (= n 2) (cells loc)))]
+         loc)))
+
+(defn create-world [w h & living-cells]
+  (vec (for [y (range w)]
+         (vec (for [x (range h)]
+                (if (contains? (first living-cells) [y x])
+                  "X"
+                  " "))))))
+
+(def board #{[1 0] [1 1] [1 2]})
+
+(create-world 4 4 board)
+
+(take 1 (iterate step board))
+(take 2 (iterate step board))
+
+(defn stepper [neighbours birth? survive?]
+  (fn [cells]
+    (set (for [[loc n] (frequencies (mapcat neighbours cells))
+               :when (if (cells loc)
+                       (survive? n)
+                       (birth? n))]
+           loc))))
+
+((stepper neighbours #{3} #{2 3}) #{[1 0] [1 1] [1 2]})
+;; sets acts as function!
+;; we can pass them as predicates to the stepper, and if the set has the arg it returns true
+;; So conways game of life:
+;; - if the cell is alive and it's neighbours are 3, then survive.
+;; - if the cell is dead and has 3 living neighbours then it becomes live
+
+(def glider #{[2 0] [2 1] [2 2] [1 2] [0 1]})
+(def light-spaceship #{[2 0] [4 0] [1 1] [1 2] [1 3] [4 3] [1 4] [2 4] [3 4]})
+(def blinker #{[1 0] [1 1] [1 2]})
+;; [w h] is the format
+(def blinker-middle #{[2 2] [2 3] [2 4]})
+
+(def conway-stepper (stepper neighbours #{3} #{2 3}))
+
+(defn conway [[w h] pattern iterations]
+  (->> (iterate conway-stepper pattern)
+       (drop iterations)
+       first
+       (create-world w h)
+       (map println)))
+
+(conway [5 15] blinker-middle 0)
+(conway [5 15] blinker-middle 1)
+(conway [5 15] blinker-middle 2)
+(conway [5 15] blinker-middle 3)
+
+(conway [5 15] light-spaceship 0)
+(conway [5 15] light-spaceship 1)
+(conway [5 15] light-spaceship 2)
+(conway [5 15] light-spaceship 3)
+(conway [5 15] light-spaceship 4)
+
+(conway [5 15] blinker 0)
+(conway [5 15] blinker 1)
+(conway [5 15] blinker 2)
+(conway [5 15] blinker 3)
+(conway [5 15] blinker 4)
+
+
+
+
+
+
 
 
 
