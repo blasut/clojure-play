@@ -376,5 +376,32 @@ original
 
 ;; Need to pracitce reduce
 
+;; page 151
+
+(defn naive-into
+  [coll source]
+  (reduce conj coll source))
+
+(= (into #{} (range 500))
+   (naive-into #{} (range 500)))
+
+(defn faster-into
+  [coll source]
+  (persistent!  (reduce conj! (transient coll) source)))
+
+(= (into #{} (range 500))
+   (naive-into #{} (range 500))
+   (faster-into #{} (range 500)))
+
+
+;; 155
+
+;; meta data metadata
+(def e ^{:created (System/currentTimeMillis)} [1 2 3])
+
+(meta e)
+
+;; page 156
+
 
 
