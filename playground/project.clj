@@ -6,4 +6,5 @@
   :dependencies [[org.clojure/clojure "1.9.0-beta4"]
                  [org.clojure/spec.alpha "0.1.143"]
                  [org.clojure/test.check "0.10.0-alpha2"]
-                 [com.cognitect/transcriptor "0.1.5"]])
+                 [com.cognitect/transcriptor "0.1.5"]
+                 [org.clojure/core.async "0.3.443"]])
