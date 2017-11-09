@@ -96,3 +96,35 @@
 
 
 
+;;* Go blocks
+
+;; go blocks are inversion-of-control processes
+;; one can "wait" inside a go-block, which is called "parking"
+
+;; when something is parked, the remaining operations are saved as a pending job
+;; control immediately returns to the calling process
+;; when the channel operation, that put the go block in "parked", becomes available the go-block resumes
+;; possibly on another thread
+
+;; the go block returns a continuation
+;; how does that look like in clojure?
+
+
+(def go-channel (async/chan))
+
+(async/go
+  (println "got:" (async/<! go-channel))
+  (println "done with go blocK!"))
+
+(println "returned from go block")
+
+(async/go
+  (async/>! go-channel [:this :is :a :value]))
+
+
+
+
+
+
+
+
