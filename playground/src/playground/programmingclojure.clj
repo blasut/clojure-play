@@ -550,7 +550,7 @@
      first z/path
      (map second))
 
-(defn draw
+(defn draw-with-path
   [w h maze path]
   (doto (javax.swing.JFrame. "Maze")
     (.setContentPane
@@ -587,7 +587,7 @@
                 (iterate z/next)
                 (filter #(= minotaur (first (z/node %))))
                 first z/path rest)]
-  (draw w h walls path))
+  (draw-with-path w h walls path))
 
 
 
