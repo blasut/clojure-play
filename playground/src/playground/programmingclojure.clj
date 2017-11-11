@@ -348,7 +348,53 @@
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; the only state is the set of living cells. We can compute each successive step based on the set of living cells
 
+(defn step
+  "Yields the next state of the world"
+  [cells]
+  (set (for [[loc n] (frequencies (mapcat neighbours cells))
+             :when (or (= n 3) (and (= n 2) (cells loc)))]
+         loc)))
+
+;; All that is needed to compute the current board is to start with a set of vectors representing the living cells.
+(->> (iterate step #{[2 0] [2 1] [2 2] [1 2] [0 1]})
+     (drop 8)
+     first
+     (populate (empty-board 6 6))
+     pprint/pprint)
+
+
+;; neighbours is the only part that cares about the content of the cells, and is depended on their structure
+
+;; to make this generic, we can use a higher order function, which act as a factory for step functions
+(defn stepper
+  "Returns a step function for Like-like cell automata.
+  neighbours takes a location and return a sequential collection of locations.
+  survive? and birth? are predicates on the number of living neighbours."
+  [neighbours birth? survive?]
+  (fn [cells]
+    (set (for [[loc n] (frequencies (mapcat neighbours cells))
+               :when (if (cells loc) (survive? n) (birth? n))]
+           loc))))
+
+(comment
+  ;; these are equivalent. Because sets are also functions.
+  ;; the set #{3} is passed as the survive? function, when a set is called as a function, it returns true if it has the value
+  (= (step)
+     (stepper neighbours #{3} #{2 3}))  )
+
+
+(defn hex-neighbours
+  [[x y]]
+  (for [dx [-1 0 1] dy (if (zero? dx) [-2 2] [-1 1])]
+    [(+ dx x) (+ dy y)]))
+
+
+(def hex-step (stepper hex-neighbours #{2} #{3 4}))
+
+(hex-step #{[0 0] [1 1] [1 3] [0 4]})
+;; this returns the correct result, but in reversed order...
 
 
 
