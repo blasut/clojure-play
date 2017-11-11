@@ -304,6 +304,51 @@
 (-> (iterate indexed-step3 glider) (nth 8) pprint/pprint)
 
 
+;; using seqs
+
+(partition 3 1 (range 5))
+
+(partition 3 1 (concat [nil] (range 5) [nil]))
+
+(defn window
+  "Returns a lazy sequence of 3-item windows centered around each item of coll"
+  ([coll] (window nil coll))
+  ([pad coll]
+   (partition 3 1 (concat [pad] coll [pad]))))
+
+
+(defn cell-block
+  "Creates a sequence of 3x3 windows from a triple of 3 sequences."
+  [[left mid right]]
+  (window (map vector left mid right)))
+
+(defn liveness
+  "Returns the liveness (nil or :on) of the center cell for the next step."
+  [block]
+  (let [[_ [_ center _] _] block]
+    (case (- (count (filter #{:on} (apply concat block)))
+             (if (= :on center) 1 0))
+      2 center
+      3 :on
+      nil)))
+
+(defn- step-row
+  "Yields the next state of the center row."
+  [rows-triple]
+  (vec (map liveness (cell-block rows-triple))))
+
+(defn indexed-free-step
+  "Yields the next state of the board."
+  [board]
+  (vec (map step-row (window (repeat nil) board))))
+
+(= (nth (iterate indexed-step glider) 8)
+   (nth (iterate indexed-free-step glider) 8))
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 
 
 
