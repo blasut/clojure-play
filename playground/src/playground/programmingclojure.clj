@@ -365,16 +365,11 @@
      (populate (empty-board 6 6))
      pprint/pprint)
 
-(->> (iterate (stepper neighbours #{3} #{2 3}) #{[2 0] [2 1] [2 2] [1 2] [0 1]})
-     (drop 8)
-     first
-     (populate (empty-board 6 6))
-     pprint/pprint)
-
-
 ;; neighbours is the only part that cares about the content of the cells, and is depended on their structure
 
+
 ;; to make this generic, we can use a higher order function, which act as a factory for step functions
+
 (defn stepper
   "Returns a step function for Like-like cell automata.
   neighbours takes a location and return a sequential collection of locations.
@@ -384,6 +379,12 @@
     (set (for [[loc n] (frequencies (mapcat neighbours cells))
                :when (if (cells loc) (survive? n) (birth? n))]
            loc))))
+
+(->> (iterate (stepper neighbours #{3} #{2 3}) #{[2 0] [2 1] [2 2] [1 2] [0 1]})
+     (drop 8)
+     first
+     (populate (empty-board 6 6))
+     pprint/pprint)
 
 (comment
   ;; these are equivalent. Because sets are also functions.
@@ -575,19 +576,20 @@
     .pack
     (.setVisible true)))
 
-(let [w 40, h 40
-      grid (grid w h)
-      walls (maze grid)
-      labyrinth (reduce disj grid walls)
-      places (distinct (apply concat labyrinth))
-      theseus (rand-nth places)
-      minotaur (rand-nth places)
-      path (->> theseus
-                (ariadne-zip labyrinth)
-                (iterate z/next)
-                (filter #(= minotaur (first (z/node %))))
-                first z/path rest)]
-  (draw-with-path w h walls path))
+(comment
+  (let [w 40, h 40
+        grid (grid w h)
+        walls (maze grid)
+        labyrinth (reduce disj grid walls)
+        places (distinct (apply concat labyrinth))
+        theseus (rand-nth places)
+        minotaur (rand-nth places)
+        path (->> theseus
+                  (ariadne-zip labyrinth)
+                  (iterate z/next)
+                  (filter #(= minotaur (first (z/node %))))
+                  first z/path rest)]
+    (draw-with-path w h walls path)))
 
 
 
