@@ -400,6 +400,7 @@
 (def hex-step (stepper hex-neighbours #{2} #{3 4}))
 
 (hex-step #{[0 0] [1 1] [1 3] [0 4]})
+
 ;; this returns the correct result, but in reversed order...
 
 
@@ -462,7 +463,8 @@
     .pack
     (.setVisible true)))
 
-(draw 40 40 (maze (grid 40 40)))
+(comment
+  (draw 40 40 (maze (grid 40 40))))
 
 ;; we can also do hex-grids
 
@@ -512,7 +514,8 @@
     .pack
     (.setVisible true)))
 
-(hex-draw 40 40 (maze (hex-grid 40 40)))
+(comment
+  (hex-draw 40 40 (maze (hex-grid 40 40))))
 
 
 
