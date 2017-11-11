@@ -1,6 +1,7 @@
 (ns playground.programmingclojure
   (:require [clojure.string :as str]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.pprint :as pprint]))
 
 ;; clojure programming
 
@@ -209,6 +210,102 @@
 (meta e)
 
 ;; page 156
+
+
+(defn empty-board
+  "Creates a rectangular empty board of the specified with and height."
+  [w h]
+  (vec (repeat w (vec (repeat h nil)))))
+
+(empty-board 5 5)
+
+(defn populate
+  "Turn :on each of the cells specified as [x, y] coordinates."
+  [board living-cells]
+  (reduce (fn [board coordinates]
+            (assoc-in board coordinates :on))
+          board
+          living-cells))
+
+(comment
+  (assoc-in (empty-board 2 2) [1 0] :on)
+  (assoc-in (empty-board 2 2) [1 1] :on)
+  (assoc-in (empty-board 2 2) [0 1] :on)
+  (assoc-in [[[nil nil]]] [0 0 1] :on)
+  (assoc-in [[[[nil nil]]]] [0 0 0 0] :on))
+
+(def glider (populate (empty-board 6 6) #{[2 0] [2 1] [2 2] [1 2] [0 1]}))
+
+
+(defn neighbours
+  [[x y]]
+  (for [dx [-1 0 1] dy [-1 0 1] :when (not= 0 dx dy)]
+    [(+ dx x) (+ dy y)]))
+
+(neighbours [1 0])
+
+
+(defn count-neighbours
+  [board loc]
+  (count (filter #(get-in board %) (neighbours loc))))
+
+(defn indexed-step
+  "Yields the next state of the board, using indices to determine neighbours, liveness, etc."
+  [board]
+  (let [w (count board)
+        h (count (first board))]
+    (loop [new-board board x 0 y 0]
+      (cond
+        (>= x w) new-board
+        (>= y h) (recur new-board (inc x) 0)
+        :else
+        (let [new-liveness
+              (case (count-neighbours board [x y])
+                2 (get-in board [x y])
+                3 :on
+                nil)]
+          (recur (assoc-in new-board [x y] new-liveness) x (inc y)))))))
+
+(-> (iterate indexed-step glider) (nth 8) pprint/pprint)
+
+(defn indexed-step2
+  [board]
+  (let [w (count board)
+        h (count (first board))]
+    (reduce
+     (fn [new-board x]
+       (reduce
+        (fn [new-board y]
+          (let [new-liveness
+                (case (count-neighbours board [x y])
+                  2 (get-in board [x y])
+                  3 :on
+                  nil)]
+            (assoc-in new-board [x y] new-liveness)))
+        new-board (range h)))
+     board (range w))))
+
+(-> (iterate indexed-step2 glider) (nth 8) pprint/pprint)
+
+(defn indexed-step3
+  [board]
+  (let [w (count board)
+        h (count (first board))]
+    (reduce
+     (fn [new-board [x y]]
+       (let [new-liveness
+             (case (count-neighbours board [x y])
+               2 (get-in board [x y])
+               3 :on
+               nil)]
+         (assoc-in new-board [x y] new-liveness)))
+     board (for [x (range h) y (range w)] [x y]))))
+
+(-> (iterate indexed-step3 glider) (nth 8) pprint/pprint)
+
+
+
+
 
 
 
