@@ -194,4 +194,10 @@ original
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(reduce + 0 [1 2 3])
+(reductions + 0 [1 2 3])
+;; omg, fucking amazing
+
+;; how does destructure work with namespaced keys?
+
 
