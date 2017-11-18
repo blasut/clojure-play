@@ -200,6 +200,17 @@ original
 (reductions + 0 [1 2 3])
 ;; omg, fucking amazing
 
+
+;; pretty sweet
+(select-keys {:first-name "First name", :last-name " baby lau"} [:first-name])
+(select-keys {:first-name "First name", :last-name " baby lau"} [:first-name :last-name])
+(select-keys {:first-name "First name", :last-name " baby lau"} [])
+
+(map #(select-keys % [:first-name])
+     [{:first-name "First name", :last-name " baby lau"}
+      {:first-name "guy", :last-name "iron"}])
+
+
+
+
 ;; how does destructure work with namespaced keys?
-
-
