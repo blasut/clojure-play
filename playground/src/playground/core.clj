@@ -211,6 +211,13 @@ original
       {:first-name "guy", :last-name "iron"}])
 
 
+(split-at 2 '[a b c d e f r])
+
+
+;; clojure coding:
+;; select (filter)
+;; transform (map)
+;; reduce
 
 
 ;; how does destructure work with namespaced keys?
