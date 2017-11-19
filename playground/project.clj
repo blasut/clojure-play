@@ -8,4 +8,5 @@
                  [org.clojure/test.check "0.10.0-alpha2"]
                  [com.cognitect/transcriptor "0.1.5"]
                  [org.clojure/core.async "0.3.465"]
-                 ])
+
+                 [cheshire "5.8.0"]])
