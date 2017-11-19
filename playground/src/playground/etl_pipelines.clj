@@ -136,6 +136,33 @@
   ;; this was actually really fast :O
   (time (process-parallel (repeat 8 file-name))))
 
+;; we can actually re-use this
+(def do-things
+  (comp (mapcat parse-json-file-reducible)
+        (filter valid-entry?)
+        (keep transform-entry-if-relevant)
+        (partition-all 1000)
+        (map save-into-database)))
+
+(defn process-with-transducers-re-use [files]
+  (transduce do-things
+             (constantly nil)           ;; the accumulator fn, but we don't want to return anything
+             nil                        ;; the starting value is also nil
+             files))
+
+(defn process-parallel-re-use [files]
+  (async/<!!
+   (async/pipeline
+    (.availableProcessors (Runtime/getRuntime))
+    (doto (async/chan) (async/close!)) ;; output challen = /dev/null
+    do-things
+    (async/to-chan files))))
+
+(comment
+  (time (process-with-transducers-re-use [file-name]))
+  (time (process-parallel-re-use (repeat 8 file-name))))
+
+
 
 
 
