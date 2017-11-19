@@ -81,14 +81,13 @@
 (defn lines-reducible [^java.io.BufferedReader rdr]
   (reify clojure.lang.IReduceInit
     (reduce [this f init]
-      (try
+      (with-open [rdr rdr]
         (loop [state init]
           (if (reduced? state)
             state
             (if-let [line (.readLine rdr)]
               (recur (f state line))
-              state)))
-        (finally (.close rdr))))))
+              state)))))))
 
 (meta #'lines-reducible)
 ;; doens't return the type hint though. Must be in the inner form?
