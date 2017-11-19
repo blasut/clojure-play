@@ -1,3 +1,5 @@
+(ns playground.reduce-examples)
+
 (defn inside [[n d] b]
   [(+ n b)
    (inc d)])
