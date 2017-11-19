@@ -1,8 +1,34 @@
 (ns playground.quickcheck
   (:require  [clojure.test :as t]
-             [clojure.test.check.generators :as gen]))
+             [clojure.test.check :as tc]
+             [clojure.test.check.generators :as gen]
+             [clojure.test.check.properties :as prop]))
 
-;;* introduction to testchec
+;;* introduction to testcheck
+
+(defn ascending? [coll]
+  (every? (fn [[a b]] (<= a b))
+          (partition 2 1 coll)))
+
+(def property
+  (prop/for-all [v (gen/vector gen/int)]
+                (let [s (sort v)]
+                  (and (= (count v) (count s))
+                       (ascending? s)))))
+
+(def bad-property
+  (prop/for-all [v (gen/vector gen/int)]
+                (ascending? v)))
+
+(comment
+  (tc/quick-check 100 property)
+  ;; {:result true, :num-tests 100, :seed 1511091368010}
+  (tc/quick-check 100 bad-property)
+  ;; {:result false,:result-data {},:seed 1511091441862,:failing-size 3,:num-tests 4,:fail [[0 -3 -3]],
+  ;; :shrunk {:total-nodes-visited 14,:depth 3,:result false,:result-data {},:smallest [[0 -1]]}}
+  (tc/quick-check 50 bad-property :seed 1511091441862))
+
+;;** generators
 
 (gen/sample (gen/map gen/simple-type-printable gen/simple-type-printable))
 
@@ -19,7 +45,7 @@
 
 (gen/sample (gen/return 42))
 
-;; recursive stuff
+;;** recursive stuff
 (def nested-vector-of-boolean (gen/recursive-gen gen/vector gen/boolean))
 (last (gen/sample nested-vector-of-boolean 20))
 (gen/sample nested-vector-of-boolean 8)
