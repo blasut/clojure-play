@@ -1,6 +1,7 @@
 (ns playground.etl-pipelines
-  (:require [clojure.java.io :as io]
-            [cheshire.core :as json]))
+  (:require [cheshire.core :as json]
+            [clojure.core.async :as async]
+            [clojure.java.io :as io]))
 
 ;; https://tech.grammarly.com/blog/building-etl-pipelines-with-clojure
 
@@ -115,7 +116,26 @@
   (time (process-with-transducers [file-name]))
   (time (process-with-transducers (repeat 8 file-name))))
 
+(defn process-parallel [files]
+  (async/<!!
+   (async/pipeline
+    (.availableProcessors (Runtime/getRuntime))
+    (doto (async/chan) (async/close!)) ;; output challen = /dev/null
+    (comp (mapcat parse-json-file-reducible)
+          (filter valid-entry?)
+          (keep transform-entry-if-relevant)
+          (partition-all 1000)
+          (map save-into-database))
+    (async/to-chan files))))            ;; channel with input data
+
+
+(comment
+  ;; this was actually really fast :O
+  (time (process-parallel (repeat 8 file-name)))
+  )
+
 ;; we can use core async with transducers to parallelize thi shiet
+
 
 
 
