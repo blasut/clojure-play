@@ -131,8 +131,9 @@
 
 (comment
   ;; this was actually really fast :O
-  (time (process-parallel (repeat 8 file-name)))
-  )
+  (time (process-parallel (repeat 8 file-name))))
+
+
 
 ;; we can use core async with transducers to parallelize thi shiet
 
