@@ -116,6 +116,9 @@
   (time (process-with-transducers [file-name]))
   (time (process-with-transducers (repeat 8 file-name))))
 
+
+;; we can use core async with transducers to parallelize thi shiet
+
 (defn process-parallel [files]
   (async/<!!
    (async/pipeline
@@ -135,7 +138,6 @@
 
 
 
-;; we can use core async with transducers to parallelize thi shiet
 
 
 
