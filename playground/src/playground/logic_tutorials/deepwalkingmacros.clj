@@ -1,4 +1,4 @@
-(ns deep-walking-macro.core)
+(ns playground.logic-tutorials.deepwalkingmacros)
 
 (comment
   (only-ints 1 2 3 4) => [1 2 3 4])

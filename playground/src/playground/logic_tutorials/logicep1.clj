@@ -1,4 +1,4 @@
-(ns logic-tutorials.episode1
+(ns playground.logic-tutorials.episode1
   (:refer-clojure :exclude [==]))
 
 (defn lvar
