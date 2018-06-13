@@ -1,2 +1,4 @@
 /workout/.nrepl-port
 *.cp
+/*.libs
+*.libs
