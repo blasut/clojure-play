@@ -6,7 +6,7 @@
 (s/def ::sets (s/and int? #(> % 0)))
 (s/def ::reps (s/and int? #(> % 0)))
 (s/def ::number (s/and int? #(> % 0)))
-;; (s/def ::unit (s/or :kg :lg))
+(s/def ::unit #{:kg :lb})
 (s/def ::unit keyword?)
 (s/def ::weight (s/keys :req [::unit ::number]))
 (s/def ::name string?)
