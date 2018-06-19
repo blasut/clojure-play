@@ -44,13 +44,7 @@
                                  (->
                                   e
                                   (update ,,, :set-reps-weight #(str/split % #"\n"))
-                                  (update ,,, :set-reps-weight #(mapv split-single-thing %)))
-                                 ;; (assoc e
-                                 ;;        :set-reps-weight
-                                 ;;        (mapv #(str/split % #"/|-")
-                                 ;;              (:set-reps-weight
-                                 ;;               (update e :set-reps-weight #(str/split % #"\n")))))
-                                 )
+                                  (update ,,, :set-reps-weight #(mapv split-single-thing %))))
                                (:exercises raw-pass))
                          pass (assoc raw-pass :exercises s-r-w)]
                      pass))]
