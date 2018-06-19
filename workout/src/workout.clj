@@ -40,11 +40,12 @@
       parse-pass (fn [raw-pass]
                    (let [s-r-w
                          (into [] (map (fn [e]
-                                         (into [] (map #(str/split % #"/|-")
-                                                       (:set-reps-weight (update e :set-reps-weight #(str/split % #"\n"))))))
+                                         (assoc e :set-reps-weight (into [] (map #(str/split % #"/|-")
+                                                                                 (:set-reps-weight (update e :set-reps-weight #(str/split % #"\n")))))))
                                        (:exercises raw-pass)))
                          pass (assoc raw-pass :exercises s-r-w)]
                      pass))]
+  (pprint/pprint input-pass)
   (pprint/pprint (:exercises input-pass))
   (pprint/pprint (parse-pass input-pass)))
 
