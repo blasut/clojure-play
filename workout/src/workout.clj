@@ -43,7 +43,7 @@
                                  (->
                                   e
                                   (update ,,, :set-reps-weight #(str/split % #"\n"))
-                                  (update ,,, :set-reps-weight (fn [e2] (mapv #(str/split % #"/|-") e2))))
+                                  (update ,,, :set-reps-weight #(mapv (fn [s] (str/split s #"/|-")) %)))
                                  ;; (assoc e
                                  ;;        :set-reps-weight
                                  ;;        (mapv #(str/split % #"/|-")
