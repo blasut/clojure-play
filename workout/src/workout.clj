@@ -37,13 +37,14 @@
                   :exercises [{:name "Squat"
                                :expected "50*5*5"
                                :set-reps-weight "1/5-20\n2/5-40\n3/5-30\n4/5-30\n5/5-30\n"}]}
+      split-single-thing #(str/split % #"/|-")
       parse-pass (fn [raw-pass]
                    (let [s-r-w
                          (mapv (fn [e]
                                  (->
                                   e
                                   (update ,,, :set-reps-weight #(str/split % #"\n"))
-                                  (update ,,, :set-reps-weight #(mapv (fn [s] (str/split s #"/|-")) %)))
+                                  (update ,,, :set-reps-weight #(mapv split-single-thing %)))
                                  ;; (assoc e
                                  ;;        :set-reps-weight
                                  ;;        (mapv #(str/split % #"/|-")
