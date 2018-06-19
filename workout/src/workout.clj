@@ -37,15 +37,20 @@
                   :exercises [{:name "Squat"
                                :expected "50*5*5"
                                :set-reps-weight "1/5-20\n2/5-40\n3/5-30\n4/5-30\n5/5-30\n"}]}
-      parse-pass (fn [{exercises :exercises} raw-pass]
+      parse-pass (fn [raw-pass]
                    (let [s-r-w
                          (mapv (fn [e]
-                                 (assoc e
-                                        :set-reps-weight
-                                        (mapv #(str/split % #"/|-")
-                                              (:set-reps-weight
-                                               (update e :set-reps-weight #(str/split % #"\n"))))))
-                               exercises)
+                                 (->
+                                  e
+                                  (update ,,, :set-reps-weight #(str/split % #"\n"))
+                                  (update ,,, :set-reps-weight (fn [e2] (mapv #(str/split % #"/|-") e2))))
+                                 ;; (assoc e
+                                 ;;        :set-reps-weight
+                                 ;;        (mapv #(str/split % #"/|-")
+                                 ;;              (:set-reps-weight
+                                 ;;               (update e :set-reps-weight #(str/split % #"\n")))))
+                                 )
+                               (:exercises raw-pass))
                          pass (assoc raw-pass :exercises s-r-w)]
                      pass))]
   (pprint/pprint input-pass)
