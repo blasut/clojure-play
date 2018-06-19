@@ -38,11 +38,13 @@
                                :expected "50*5*5"
                                :set-reps-weight "1/5-20\n2/5-40\n3/5-30\n4/5-30\n5/5-30\n"}]}
       parse-pass (fn [raw-pass]
-                   (let [s-r-w (map (fn [e]
-                                      (map #(str/split % #"/|-")
-                                           (:set-reps-weight (update e :set-reps-weight #(str/split % #"\n")))))
-                                    (:exercises raw-pass))]
-                     s-r-w))]
+                   (let [s-r-w
+                         (into [] (map (fn [e]
+                                         (into [] (map #(str/split % #"/|-")
+                                                       (:set-reps-weight (update e :set-reps-weight #(str/split % #"\n"))))))
+                                       (:exercises raw-pass)))
+                         pass (assoc raw-pass :exercises s-r-w)]
+                     pass))]
   (pprint/pprint (:exercises input-pass))
   (pprint/pprint (parse-pass input-pass)))
 
