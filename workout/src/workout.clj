@@ -92,16 +92,19 @@
       next-workout (fn [schema starting-weights prev-pass-index]
                      (let [next-pass (get-in schema [:pass (+ prev-pass-index 1)])
                            exercises (map #(assoc % :sets-reps-weight (conj (:sets-reps %) (get starting-weights (:name %)))) (:exercises next-pass))]
-                       exercises))
+                       {:name (:name next-pass)
+                        :exercises exercises}))
 
       workout->text (fn [workout]
-                      (str/join "\n" (reduce (fn [coll exercise]
-                                               (let [name (:name exercise)
-                                                     [sets reps weight] (:sets-reps-weight exercise)
-                                                     warmup ""]
-                                                 (conj coll (str/join [name "\t" weight "*" sets "*" reps]))))
-                                             []
-                                             workout)))]
+                      (let [exercises (reduce (fn [coll exercise]
+                                                (let [name (:name exercise)
+                                                      [sets reps weight] (:sets-reps-weight exercise)
+                                                      warmup ""]
+                                                  (conj coll (str/join [name "\t" weight "*" sets "*" reps]))))
+                                              []
+                                              (:exercises workout))
+                            pass (str "Pass: " (:name workout))]
+                        (str/join "\n" (flatten [pass exercises]))))]
   (pprint/pprint schema)
   (pprint/pprint (next-workout schema {"Squat" 20
                                        "Bench" 20
