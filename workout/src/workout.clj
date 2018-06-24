@@ -57,8 +57,8 @@
 
 (comment
   ;; I would like to have the following interface:
-  ;; Schema   = [Pass] [Rules]
-  ;; Pass     = [Exercises] Name [Rules] ;; Rules specific to that Pass, can override the Schema???
+  ;; Schema   = Name Description [Pass] [Rules]
+  ;; Pass     = Name [Exercises] [Rules] ;; Rules specific to that Pass, can override the Schema???
   ;; Exercise = Name Set/Rep [Rules] || Exercise = Name Description [Rules] ;; For example if you have an HiT exercise on the bike
   ;; Set/Rep = (Sets, Reps)
   ;; Rules = ??? ;; Maybe keys that point to hashmap-dispatcher?
