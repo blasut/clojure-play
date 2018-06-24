@@ -89,11 +89,11 @@
                                   {:name "Deadlift"
                                    :sets-reps [5 5]
                                    :rules ["Increase weight by 5kg per workout"]}]}]}
+
       next-workout (fn [schema starting-weights prev-pass-index]
                      (let [next-pass (get-in schema [:pass (+ prev-pass-index 1)])
                            exercises (map #(assoc % :sets-reps-weight (conj (:sets-reps %) (get starting-weights (:name %)))) (:exercises next-pass))]
-                       {:name (:name next-pass)
-                        :exercises exercises}))
+                       (assoc next-pass :exercises exercises)))
 
       gen-warmup (fn [exercise start-weight work-weight increment]
                    ;; TODO
@@ -113,6 +113,29 @@
                                               (conj sets-reps [1 3 new-weight]))
                                        sets-reps)))]
                      warmups))
+
+      gen-warmup-ascending (fn [exercise start-weight work-weight]
+                             ;; Always increment by the increment, and the closer to the work-weight, lessen the reps
+                             ;;
+                             ;; Example 150kg
+                             ;; Add two sets of 5 reps with start-weight (20)
+                             ;; Add one set of 5 reps with 20 + 20
+                             ;; Add one set of 3 reps with 40 + 20
+                             ;; Add one set of 2 reps with 60 + 20
+                             ;; Add one set of 2 reps with 80 + 20
+                             ;; Add one set of 2 reps with 100 + 20
+                             ;; Add one set of 1 reps with 120 + 20
+                             ;;
+                             ;; Example 100kg
+                             ;; Add two sets of 5 reps with start-weight (20)
+                             ;; Add one set of 5 reps with 20 + 20
+                             ;; Add one set of 2 reps with 40 + 20
+                             ;; Add one set of 1 reps with 60 + 20
+
+                             ;; Example 50kg
+                             ;; Add two sets of 5 reps with start-weight (20)
+                             ;; Add one set of 3 reps with 20 + 10
+                             )
 
       workout->text (fn [workout]
                       (let [exercises (reduce (fn [coll exercise]
