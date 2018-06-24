@@ -68,9 +68,13 @@
 
   (add-workout completed-pass)
 
-  (generate-workout-from schema)
+  ;; StartingWeights = {Exercise-Name Weight}
+  ;; StartingWeights = {:overhead-press 40}
+  (generate-workout-from-schema schema [starting-weights???])
 
-  (generate-next-workout-from schema [workouts])
+  (take 5 (generate-workouts-from-schema schema [starting-weights???]))
+
+  (generate-next-workout-from-schema schema [workouts])
 
   (workouts->progression-graph [workouts])
 
