@@ -93,7 +93,7 @@
   ;; - Start with lowest weight for that exercise,
   ;; - Do 2 sets of 5 reps each
   ;; - Then add between 5 to 10kg
-  ;; - Do 2 sets of 5 reps each
+  ;; - Do 1 set of 2-3 reps
   ;; - Repeat until next last warmup weight
   ;; - Then do 1 set of 5 reps
   ;; - Then add 5 to 10 kg
