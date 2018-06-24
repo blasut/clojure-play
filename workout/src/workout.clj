@@ -95,9 +95,24 @@
                        {:name (:name next-pass)
                         :exercises exercises}))
 
-      gen-warmup (fn [exercise]
+      gen-warmup (fn [exercise start-weight work-weight increment]
                    ;; TODO
-                   )
+                   ;; - Get lowest weight
+                   ;; - Add two sets of 5 reps
+                   ;; - Then add Xkg
+                   ;; - Add set of 3 reps
+                   ;; - Repeat until work weight
+                   (let [start-sets [2 5 start-weight]
+                         warmups (loop [start-weight start-weight
+                                        work-weight work-weight
+                                        sets-reps [start-sets]]
+                                   (let [new-weight (+ start-weight increment)]
+                                     (if (< new-weight work-weight)
+                                       (recur new-weight
+                                              work-weight
+                                              (conj sets-reps [1 3 new-weight]))
+                                       sets-reps)))]
+                     warmups))
 
       workout->text (fn [workout]
                       (let [exercises (reduce (fn [coll exercise]
@@ -109,6 +124,7 @@
                                               (:exercises workout))
                             pass (str "Pass: " (:name workout))]
                         (str/join "\n" (flatten [pass exercises]))))]
+
   (pprint/pprint schema)
   (pprint/pprint (next-workout schema {"Squat" 20
                                        "Bench" 20
@@ -122,6 +138,7 @@
                                        "Overhead Press" 20
                                        "Deadlift" 50}
                                0))
+  (gen-warmup (get-in schema [:pass 0 :exercises 0]) 20 100 20)
   )
 
 (comment
@@ -161,7 +178,7 @@
   ;; Warmup:
   ;; - Start with lowest weight for that exercise,
   ;; - Do 2 sets of 5 reps each
-  ;; - Then add between 5 to 10kg
+  ;; - Then add between 5 to 20kg
   ;; - Do 1 set of 2-3 reps
   ;; - Repeat until next last warmup weight
   ;; - Then do 1 set of 5 reps
