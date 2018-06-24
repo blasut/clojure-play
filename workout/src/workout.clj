@@ -95,6 +95,10 @@
                        {:name (:name next-pass)
                         :exercises exercises}))
 
+      gen-warmup (fn [exercise]
+                   ;; TODO
+                   )
+
       workout->text (fn [workout]
                       (let [exercises (reduce (fn [coll exercise]
                                                 (let [name (:name exercise)
