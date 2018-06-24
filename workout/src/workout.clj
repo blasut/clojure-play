@@ -116,7 +116,7 @@
 
       gen-warmup-ascending (fn [exercise start-weight work-weight]
                              ;; Always increment by the increment, and the closer to the work-weight, lessen the reps
-                             ;;
+
                              ;; Example 150kg
                              ;; Add two sets of 5 reps with start-weight (20)
                              ;; Add one set of 5 reps with 20 + 20
@@ -125,16 +125,19 @@
                              ;; Add one set of 2 reps with 80 + 20
                              ;; Add one set of 2 reps with 100 + 20
                              ;; Add one set of 1 reps with 120 + 20
-                             ;;
+
                              ;; Example 100kg
                              ;; Add two sets of 5 reps with start-weight (20)
                              ;; Add one set of 5 reps with 20 + 20
                              ;; Add one set of 2 reps with 40 + 20
                              ;; Add one set of 1 reps with 60 + 20
 
-                             ;; Example 50kg
+                             ;; Example 50kg (if the w-w ... )
                              ;; Add two sets of 5 reps with start-weight (20)
                              ;; Add one set of 3 reps with 20 + 10
+
+                             ;; Example 30kg (if the w-w is less than or eq to the start+inc)
+                             ;; Add two sets of 5 reps with start-weight (20)
                              )
 
       workout->text (fn [workout]
