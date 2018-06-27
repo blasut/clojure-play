@@ -27,6 +27,7 @@
                                       :sets-reps [5 5]
                                       :rules ["Increase weight by 5kg per workout"]}]}}})
 
+(def schemas (atom [schema]))
 
 (defn- parse-s-r-w [e]
   (let [split-into-s-r-w #(str/split % #"/|-")]
@@ -37,10 +38,20 @@
 
 ;; clojure.core/repeatedly might be useful
 
-(defn read-workout []
-  (println "Enter something> ")
-  (def x (read-line))
-  (println (str "You typed \\"" x "\\"")))
+(let []
+  (println "Pick schema by key:")
+  (doseq [[idx s] (map-indexed vector @schemas)]
+    (println (str idx ": " (:name s))))
+  (let [k (Integer/parseInt (read-line))
+        s (get @schemas k)]
+    (println (str "You typed: " k " of type: " (type k)))
+    (println "Pick pass:")
+    (println (str/join " or " (keys (:pass s))))
+    (let [p (get (:pass s) (read-line))]
+      (pprint/pprint p)
+      (println "Please enter your set/rep/weights for exercise:")
+      (doseq [e (:exercises p)]
+        (println (str (:name e) ":"))))))
 
 (let [pass {:date "2018-19-6" :name "A" :week 1
             :exercises [{:name "Squat"
