@@ -167,6 +167,42 @@
   (gen-warmup (get-in schema [:pass 0 :exercises 0]) 20 100 20)
   )
 
+
+;; calculate which weights to add on each side, based on the bar weight
+(let [bar-weight 18.5
+      goal-weight 50]
+  ;; weight to add: (goal-weight - bar-weight) / 2
+  ;; split into reasonable weights
+  ;; bars-available: 0.5, 1.25, 2.5, 5, 10, 15, 20, 25
+
+  ;; example: bar 20, goal 50
+  ;; 50-20 = 30
+  ;; 30/2 = 15
+  ;; result = 15kg on each side
+
+  ;; example bar 18.5, goal 50
+  ;; 50-18.5 = 31.5
+  ;; 31.5/2 = 15.75
+  ;; 15kg + 0.5 + 0.5
+  ;; == total is 16kg * 2 = 32kg (0.5 overweight)
+
+  ;; example bar 18.5, goal 55
+  ;; 55-18.5 = 36.5
+  ;; 36.5/2 = 18.25
+  ;; if the decimal is .25, ceil to number to .5
+  ;; 36.5/2 ~= 18.5
+  ;; 15kg + 2.5 + 0.5 + 0.5
+
+  ;; example bar 18.5, goal 55.5
+  ;; 55.5-18.5 = 36
+  ;; 36/2 = 18
+  ;; 15kg + 2.5 + 0.5
+
+  ;; result: [weight-for-a-side overweight]
+  ;; result: [15 0]
+  ;; result: [16 0.5]
+  ())
+
 (comment
   ;; I would like to have the following interface:
   ;; Schema   = Name Description [Pass] [Rules]
