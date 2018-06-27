@@ -29,12 +29,17 @@
 
 (def schemas (atom [schema]))
 
-(defn- parse-s-r-w [e]
+(defn- parse-s-r-w-multi [e]
   (let [split-into-s-r-w #(str/split % #"/|-")]
     (->
      e
      (update ,,, :set-reps-weight #(str/split % #"\n"))
      (update ,,, :set-reps-weight #(mapv split-into-s-r-w %)))))
+
+(def s "1/5-20")
+(defn- parse-s-r-w [s]
+  (let [[s r w] (str/split s #"/|-")]
+    [(Integer/parseInt s) (Integer/parseInt r) (Float/parseFloat w)]))
 
 ;; clojure.core/repeatedly might be useful
 
@@ -51,27 +56,35 @@
       (pprint/pprint p)
       (println "Please enter your set/rep/weights for exercise:")
       (doseq [e (:exercises p)]
-        (println (str (:name e) ":"))))))
+        (println (str (:name e) ":"))
+        (loop [input (read-line)
+               s-r-ws []]
+          (pprint/pprint s-r-ws)
+          (if (= input ":q")
+            s-r-ws
+            (recur (read-line)
+                   (conj s-r-ws (parse-s-r-w input)))))))))
 
-(let [pass {:date "2018-19-6" :name "A" :week 1
-            :exercises [{:name "Squat"
-                         :expected [5 5 50]
-                         :set-reps-weight [[1 5 20]
-                                           [2 5 40]
-                                           [3 5 30]
-                                           [4 5 30]
-                                           [5 5 30]]}]}
-      input-pass {:date "2018-19-6" :name "A" :week 1
-                  :exercises [{:name "Squat"
-                               :expected "50*5*5"
-                               :set-reps-weight "1/5-20\n2/5-40\n3/5-30\n4/5-30\n5/5-30\n"}]}
+(comment
+  (let [pass {:date "2018-19-6" :name "A" :week 1
+              :exercises [{:name "Squat"
+                           :expected [5 5 50]
+                           :set-reps-weight [[1 5 20]
+                                             [2 5 40]
+                                             [3 5 30]
+                                             [4 5 30]
+                                             [5 5 30]]}]}
+        input-pass {:date "2018-19-6" :name "A" :week 1
+                    :exercises [{:name "Squat"
+                                 :expected "50*5*5"
+                                 :set-reps-weight "1/5-20\n2/5-40\n3/5-30\n4/5-30\n5/5-30\n"}]}
 
-      parse-pass (fn [raw-pass]
-                   (let [s-r-w (mapv parse-s-r-w (:exercises raw-pass))]
-                     (assoc raw-pass :exercises s-r-w)))]
-  (pprint/pprint input-pass)
-  (pprint/pprint (:exercises input-pass))
-  (pprint/pprint (parse-pass input-pass)))
+        parse-pass (fn [raw-pass]
+                     (let [s-r-w (mapv parse-s-r-w (:exercises raw-pass))]
+                       (assoc raw-pass :exercises s-r-w)))]
+    (pprint/pprint input-pass)
+    (pprint/pprint (:exercises input-pass))
+    (pprint/pprint (parse-pass input-pass))))
 
 
 
