@@ -3,6 +3,30 @@
             [clojure.string :as str]
             [clojure.pprint :as pprint]))
 
+(def schema {:name "StrongLifts"
+             :description "Lift strongly"
+             :rules ["Alternate passes"]
+             :pass {"A" {:name "A"
+                         :exercises [{:name "Squat"
+                                      :sets-reps [5 5]
+                                      :rules ["Increase weight by 2.5kg per workout"]}
+                                     {:name "Bench"
+                                      :sets-reps [5 5]
+                                      :rules ["Increase weight by 2.5kg per workout"]}
+                                     {:name "Barbell Row"
+                                      :sets-reps [5 5]
+                                      :rules ["Increase weight by 2.5kg per workout"]}]}
+                    "B" {:name "B"
+                         :exercises [{:name "Squat"
+                                      :sets-reps [5 5]
+                                      :rules ["Increase weight by 2.5kg per workout"]}
+                                     {:name "Overhead Press"
+                                      :sets-reps [5 5]
+                                      :rules ["Increase weight by 2.5kg per workout"]}
+                                     {:name "Deadlift"
+                                      :sets-reps [5 5]
+                                      :rules ["Increase weight by 5kg per workout"]}]}}})
+
 
 (defn- parse-s-r-w [e]
   (let [split-into-s-r-w #(str/split % #"/|-")]
@@ -10,6 +34,13 @@
      e
      (update ,,, :set-reps-weight #(str/split % #"\n"))
      (update ,,, :set-reps-weight #(mapv split-into-s-r-w %)))))
+
+;; clojure.core/repeatedly might be useful
+
+(defn read-workout []
+  (println "Enter something> ")
+  (def x (read-line))
+  (println (str "You typed \\"" x "\\"")))
 
 (let [pass {:date "2018-19-6" :name "A" :week 1
             :exercises [{:name "Squat"
@@ -32,6 +63,7 @@
   (pprint/pprint (parse-pass input-pass)))
 
 
+
 (let [completed-exercises [{:name "Squat"
                             :comment "Nice form"
                             :sets-reps [5 5]
@@ -45,31 +77,7 @@
   completed-exercises)
 
 ;; Based on a schema, generate the next workout
-(let [schema {:name "StrongLifts"
-              :description "Lift strongly"
-              :rules ["Alternate passes"]
-              :pass [{:name "A"
-                      :exercises [{:name "Squat"
-                                   :sets-reps [5 5]
-                                   :rules ["Increase weight by 2.5kg per workout"]}
-                                  {:name "Bench"
-                                   :sets-reps [5 5]
-                                   :rules ["Increase weight by 2.5kg per workout"]}
-                                  {:name "Barbell Row"
-                                   :sets-reps [5 5]
-                                   :rules ["Increase weight by 2.5kg per workout"]}]}
-                     {:name "B"
-                      :exercises [{:name "Squat"
-                                   :sets-reps [5 5]
-                                   :rules ["Increase weight by 2.5kg per workout"]}
-                                  {:name "Overhead Press"
-                                   :sets-reps [5 5]
-                                   :rules ["Increase weight by 2.5kg per workout"]}
-                                  {:name "Deadlift"
-                                   :sets-reps [5 5]
-                                   :rules ["Increase weight by 5kg per workout"]}]}]}
-
-      next-workout (fn [schema starting-weights prev-pass-index]
+(let [next-workout (fn [schema starting-weights prev-pass-index]
                      (let [next-pass (get-in schema [:pass (+ prev-pass-index 1)])
                            exercises (map #(assoc % :sets-reps-weight (conj (:sets-reps %) (get starting-weights (:name %)))) (:exercises next-pass))]
                        (assoc next-pass :exercises exercises)))
@@ -144,8 +152,7 @@
                                        "Deadlift" 50}
                                0))
 
-  (gen-warmup (get-in schema [:pass 0 :exercises 0]) 20 100 20)
-  )
+  (gen-warmup (get-in schema [:pass 0 :exercises 0]) 20 100 20))
 
 
 ;; calculate which weights to add on each side, based on the bar weight
